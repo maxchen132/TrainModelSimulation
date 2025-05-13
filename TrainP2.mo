@@ -17,7 +17,7 @@ package TrainP2
     parameter SI.Efficiency eta_mec = 0.98 "Mechanical torque transmission
     efficiency";
     
-    // Fricion Parameters
+    // Friction Parameters
     parameter Real A = 1.1224e-3;
     parameter Real B = 9.32e-6;
     parameter Real C = 3.044e-7;
