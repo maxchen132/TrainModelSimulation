@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="/xml/XSLT/panelfile-5-5-5.xsl" type="text/xsl"?>
+<layout-config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://jmri.org/xml/schema/layout-5-5-5.xsd">
+  <jmriversion>
+    <major>5</major>
+    <minor>10</minor>
+    <test>0</test>
+    <modifier />
+  </jmriversion>
+  <sensors class="jmri.jmrix.internal.configurexml.InternalSensorManagerXml">
+    <defaultInitialState>unknown</defaultInitialState>
+    <sensor inverted="false">
+      <systemName>ISCLOCKRUNNING</systemName>
+    </sensor>
+  </sensors>
+  <turnouts class="jmri.jmrix.dccpp.configurexml.DCCppTurnoutManagerXml">
+    <operations automate="false">
+      <operation name="NoFeedback" class="jmri.configurexml.turnoutoperations.NoFeedbackTurnoutOperationXml" interval="300" maxtries="2" />
+      <operation name="Raw" class="jmri.configurexml.turnoutoperations.RawTurnoutOperationXml" interval="300" maxtries="1" />
+      <operation name="Sensor" class="jmri.configurexml.turnoutoperations.SensorTurnoutOperationXml" interval="300" maxtries="3" />
+    </operations>
+    <defaultclosedspeed>Normal</defaultclosedspeed>
+    <defaultthrownspeed>Restricted</defaultthrownspeed>
+    <turnout feedback="BSTURNOUT" inverted="false" automate="Off">
+      <systemName>IT100</systemName>
+    </turnout>
+    <turnout feedback="BSTURNOUT" inverted="false" automate="Off">
+      <systemName>IT200</systemName>
+    </turnout>
+    <turnout feedback="BSOUTPUT" inverted="false" automate="Off">
+      <systemName>DT526</systemName>
+    </turnout>
+    <turnout feedback="BSOUTPUT" inverted="false" automate="Off">
+      <systemName>DT527</systemName>
+    </turnout>
+    <turnout feedback="BSOUTPUT" inverted="false" automate="Off">
+      <systemName>DT528</systemName>
+    </turnout>
+    <turnout feedback="BSOUTPUT" inverted="false" automate="Off">
+      <systemName>DT529</systemName>
+    </turnout>
+    <turnout feedback="BSOUTPUT" inverted="false" automate="Off">
+      <systemName>DT530</systemName>
+    </turnout>
+    <turnout feedback="BSOUTPUT" inverted="false" automate="Off">
+      <systemName>DT531</systemName>
+    </turnout>
+    <turnout feedback="BSOUTPUT" inverted="false" automate="Off">
+      <systemName>DT532</systemName>
+    </turnout>
+    <turnout feedback="BSOUTPUT" inverted="false" automate="Off">
+      <systemName>DT533</systemName>
+    </turnout>
+    <turnout feedback="BSOUTPUT" inverted="false" automate="Off">
+      <systemName>DT534</systemName>
+    </turnout>
+    <turnout feedback="BSOUTPUT" inverted="false" automate="Off">
+      <systemName>DT535</systemName>
+    </turnout>
+    <turnout feedback="BSOUTPUT" inverted="false" automate="Off">
+      <systemName>DT536</systemName>
+    </turnout>
+    <turnout feedback="BSOUTPUT" inverted="false" automate="Off">
+      <systemName>DT537</systemName>
+    </turnout>
+  </turnouts>
+  <memories class="jmri.managers.configurexml.DefaultMemoryManagerXml">
+    <memory value="12:35 AM">
+      <systemName>IMCURRENTTIME</systemName>
+    </memory>
+    <memory value="1.0">
+      <systemName>IMRATEFACTOR</systemName>
+    </memory>
+  </memories>
+  <blocks class="jmri.configurexml.BlockManagerXml">
+    <defaultspeed>Normal</defaultspeed>
+    <block systemName="IB:AUTO:0001">
+      <systemName>IB:AUTO:0001</systemName>
+      <userName>Siding</userName>
+    </block>
+    <block systemName="IB:AUTO:0002">
+      <systemName>IB:AUTO:0002</systemName>
+      <userName>Through</userName>
+    </block>
+    <block systemName="IB:AUTO:0003">
+      <systemName>IB:AUTO:0003</systemName>
+      <userName>Main</userName>
+    </block>
+    <block systemName="IB:AUTO:0001" length="0.0" curve="0">
+      <systemName>IB:AUTO:0001</systemName>
+      <userName>Siding</userName>
+      <permissive>no</permissive>
+    </block>
+    <block systemName="IB:AUTO:0002" length="0.0" curve="0">
+      <systemName>IB:AUTO:0002</systemName>
+      <userName>Through</userName>
+      <permissive>no</permissive>
+    </block>
+    <block systemName="IB:AUTO:0003" length="0.0" curve="0">
+      <systemName>IB:AUTO:0003</systemName>
+      <userName>Main</userName>
+      <permissive>no</permissive>
+    </block>
+  </blocks>
+  <layoutblocks class="jmri.jmrit.display.layoutEditor.configurexml.LayoutBlockManagerXml">
+    <layoutblock systemName="ILB1" occupiedsense="2" trackcolor="darkGray" occupiedcolor="red" extracolor="white">
+      <systemName>ILB1</systemName>
+      <userName>Siding</userName>
+    </layoutblock>
+    <layoutblock systemName="ILB2" occupiedsense="2" trackcolor="darkGray" occupiedcolor="red" extracolor="white">
+      <systemName>ILB2</systemName>
+      <userName>Through</userName>
+    </layoutblock>
+    <layoutblock systemName="ILB3" occupiedsense="2" trackcolor="darkGray" occupiedcolor="red" extracolor="white">
+      <systemName>ILB3</systemName>
+      <userName>Main</userName>
+    </layoutblock>
+  </layoutblocks>
+  <signalmastlogics class="jmri.managers.configurexml.DefaultSignalMastLogicManagerXml">
+    <logicDelay>500</logicDelay>
+  </signalmastlogics>
+  <meters class="jmri.managers.configurexml.AbstractMeterManagerXml">
+    <meter>
+      <systemName>DVC_CurrentMAIN</systemName>
+    </meter>
+  </meters>
+  <timebase class="jmri.jmrit.simpleclock.configurexml.SimpleTimebaseXml" time="Tue Apr 08 11:18:46 EDT 2025" rate="1.0" startrate="1.0" run="yes" master="yes" sync="no" correct="no" display="no" startstopped="no" startrunning="yes" startsettime="no" startclockoption="0" showbutton="no" startsetrate="yes" />
+  <LayoutEditor class="jmri.jmrit.display.layoutEditor.configurexml.LayoutEditorXml" name="My Layout" x="-231" y="132" windowheight="815" windowwidth="1295" panelheight="766" panelwidth="1390" sliders="no" scrollable="none" editable="yes" positionable="yes" controlling="yes" animating="yes" showhelpbar="no" drawgrid="yes" snaponadd="yes" snaponmove="yes" antialiasing="no" turnoutcircles="no" tooltipsnotedit="no" tooltipsinedit="yes" mainlinetrackwidth="4" xscale="1.0" yscale="1.0" sidetrackwidth="2" defaulttrackcolor="darkGray" defaultoccupiedtrackcolor="red" defaultalternativetrackcolor="white" defaulttextcolor="black" turnoutcirclecolor="black" turnoutcirclesize="4" turnoutdrawunselectedleg="yes" turnoutbx="20.0" turnoutcx="20.0" turnoutwid="10.0" xoverlong="30.0" xoverhwid="10.0" xovershort="10.0" autoblkgenerate="no" redBackground="192" greenBackground="192" blueBackground="192" gridSize="10" gridSize2nd="10" openDispatcher="no" useDirectTurnoutControl="no">
+    <layoutTrackDrawingOptions name="My Layout" class="jmri.jmrit.display.layoutEditor.configurexml.LayoutTrackDrawingOptionsXml">
+      <mainBallastColor>#000000</mainBallastColor>
+      <mainBallastWidth>0</mainBallastWidth>
+      <mainBlockLineDashPercentageX10>0</mainBlockLineDashPercentageX10>
+      <mainBlockLineWidth>4</mainBlockLineWidth>
+      <mainRailColor>#404040</mainRailColor>
+      <mainRailCount>1</mainRailCount>
+      <mainRailGap>0</mainRailGap>
+      <mainRailWidth>2</mainRailWidth>
+      <mainTieColor>#000000</mainTieColor>
+      <mainTieGap>0</mainTieGap>
+      <mainTieLength>0</mainTieLength>
+      <mainTieWidth>0</mainTieWidth>
+      <sideBallastColor>#000000</sideBallastColor>
+      <sideBallastWidth>0</sideBallastWidth>
+      <sideBlockLineDashPercentageX10>0</sideBlockLineDashPercentageX10>
+      <sideBlockLineWidth>2</sideBlockLineWidth>
+      <sideRailColor>#404040</sideRailColor>
+      <sideRailCount>1</sideRailCount>
+      <sideRailGap>0</sideRailGap>
+      <sideRailWidth>1</sideRailWidth>
+      <sideTieColor>#000000</sideTieColor>
+      <sideTieGap>0</sideTieGap>
+      <sideTieLength>0</sideTieLength>
+      <sideTieWidth>0</sideTieWidth>
+    </layoutTrackDrawingOptions>
+    <layoutturnout ident="TO3" type="RH_TURNOUT" hidden="no" disabled="no" disableWhenOccupied="no" showtooltip="yes" continuing="2" xcen="101.0" ycen="199.0" xa="80.0" ya="200.0" xb="122.0" yb="198.0" xc="121.0" yc="209.0" xd="80.0" yd="200.0" ver="1" class="jmri.jmrit.display.layoutEditor.configurexml.LayoutRHTurnoutXml" connectaname="T8" connectbname="T4" connectcname="T5" />
+    <layoutturnout ident="TO4" type="LH_TURNOUT" hidden="no" disabled="no" disableWhenOccupied="no" showtooltip="yes" continuing="2" xcen="299.0" ycen="199.0" xa="320.0" ya="200.0" xb="278.0" yb="198.0" xc="279.0" yc="209.0" xd="320.0" yd="200.0" ver="1" class="jmri.jmrit.display.layoutEditor.configurexml.LayoutLHTurnoutXml" connectaname="T6" connectbname="T4" connectcname="T5" />
+    <tracksegment ident="T4" blockname="Through" connect1name="TO3" type1="TURNOUT_B" connect2name="TO4" type2="TURNOUT_B" dashed="no" mainline="yes" hidden="no" class="jmri.jmrit.display.layoutEditor.configurexml.TrackSegmentXml" />
+    <tracksegment ident="T5" blockname="Siding" connect1name="TO3" type1="TURNOUT_C" connect2name="TO4" type2="TURNOUT_C" dashed="no" mainline="no" hidden="no" class="jmri.jmrit.display.layoutEditor.configurexml.TrackSegmentXml" />
+    <tracksegment ident="T6" blockname="Main" connect1name="TO4" type1="TURNOUT_A" connect2name="A7" type2="POS_POINT" dashed="no" mainline="no" hidden="no" arc="yes" flip="yes" circle="yes" angle="180.0" hideConLines="no" class="jmri.jmrit.display.layoutEditor.configurexml.TrackSegmentXml" />
+    <tracksegment ident="T7" blockname="Main" connect1name="A7" type1="POS_POINT" connect2name="A8" type2="POS_POINT" dashed="no" mainline="no" hidden="no" class="jmri.jmrit.display.layoutEditor.configurexml.TrackSegmentXml" />
+    <tracksegment ident="T8" blockname="Main" connect1name="A8" type1="POS_POINT" connect2name="TO3" type2="TURNOUT_A" dashed="no" mainline="no" hidden="no" arc="yes" flip="yes" circle="yes" angle="180.0" hideConLines="no" class="jmri.jmrit.display.layoutEditor.configurexml.TrackSegmentXml" />
+    <positionablepoint ident="A7" type="ANCHOR" x="320.0" y="100.0" connect1name="T6" connect2name="T7" class="jmri.jmrit.display.layoutEditor.configurexml.PositionablePointXml" />
+    <positionablepoint ident="A8" type="ANCHOR" x="80.0" y="100.0" connect1name="T7" connect2name="T8" class="jmri.jmrit.display.layoutEditor.configurexml.PositionablePointXml" />
+  </LayoutEditor>
+  <paneleditor class="jmri.jmrit.display.controlPanelEditor.configurexml.ControlPanelEditorXml" name="Untitled(Control Panel)" x="24" y="137" height="771" width="1197" editable="yes" positionable="yes" showtooltips="yes" controlling="yes" hide="no" panelmenu="yes" scrollable="both" redBackground="255" greenBackground="255" blueBackground="255" state="0" shapeSelect="yes" />
+  <filehistory>
+    <operation>
+      <type>app</type>
+      <date>Tue May 13 16:00:51 EDT 2025</date>
+      <filename>PanelPro (v5.10.0)</filename>
+    </operation>
+    <operation>
+      <type>Load OK</type>
+      <date>Tue May 13 16:01:54 EDT 2025</date>
+      <filename>/C:/Users/mchen/Downloads/kato_unitrack_m2_layout.xml</filename>
+      <filehistory>
+        <operation>
+          <type>app</type>
+          <date>Tue May 13 15:35:56 EDT 2025</date>
+          <filename>PanelPro (v5.10.0)</filename>
+        </operation>
+        <operation>
+          <type>Load with errors</type>
+          <date>Tue May 13 15:49:59 EDT 2025</date>
+          <filename>/C:/Users/mchen/Downloads/kato_unitrack_m2_layout.xml</filename>
+          <filehistory>
+            <operation>
+              <type>app</type>
+              <date>Tue Apr 08 11:18:45 EDT 2025</date>
+              <filename>PanelPro (v5.11.4)</filename>
+            </operation>
+            <operation>
+              <type>Store</type>
+              <date>Tue Apr 08 11:59:52 EDT 2025</date>
+              <filename>C:\Users\court\JMRI\My_JMRI_Railroad.jmri\kato_unitrack_m2_layout.xml</filename>
+            </operation>
+          </filehistory>
+        </operation>
+        <operation>
+          <type>Store</type>
+          <date>Tue May 13 16:00:48 EDT 2025</date>
+          <filename>C:\Users\mchen\Downloads\kato_unitrack_m2_layout.xml</filename>
+        </operation>
+      </filehistory>
+    </operation>
+    <operation>
+      <type>Store</type>
+      <date>Wed May 14 00:35:50 EDT 2025</date>
+      <filename>C:\Users\mchen\Downloads\kato_unitrack_m2_layout.xml</filename>
+    </operation>
+  </filehistory>
+  <!--Written by JMRI version 5.10+Rca461bd266 on Wed May 14 00:35:50 EDT 2025-->
+</layout-config>
