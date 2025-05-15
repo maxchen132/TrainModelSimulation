@@ -18,7 +18,7 @@ x2 = (straight_len) + curve_radius * np.cos(theta1)
 y2 = curve_radius +  curve_radius * np.sin(theta1)
 
 # Bottom straight segment (bottom right to bottom left)
-x3 = np.linspace(straight_len, 0, num_points_straight)
+x3 = np.linspace(0, straight_len, num_points_straight)
 y3 = np.full_like(x3, 2 * curve_radius)
 
 # Left semicircle (bottom left to top left)
@@ -46,15 +46,15 @@ drds_table = np.column_stack((s, drds))
 d2rds2_table = np.column_stack((s, d2rds2))
 
 # Plot to visualize
-# plt.figure(figsize=(8, 4))
-# plt.plot(x_full, y_full, label='Flat Track')
-# plt.gca().set_aspect('equal')
-# plt.xlabel('X [m]')
-# plt.ylabel('Y [m]')
-# plt.title('Flat Track Visualizer')
-# plt.grid(True)
-# plt.legend()
-# plt.show()
+plt.figure(figsize=(8, 4))
+plt.plot(x_full, y_full, label='Flat Track')
+plt.gca().set_aspect('equal')
+plt.xlabel('X [m]')
+plt.ylabel('Y [m]')
+plt.title('Flat Track Visualizer')
+plt.grid(True)
+plt.legend()
+plt.show()
 
 # Save .mat file for Modelica
 savemat('TrackTable.mat', {
