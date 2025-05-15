@@ -22,10 +22,10 @@
     <defaultclosedspeed>Normal</defaultclosedspeed>
     <defaultthrownspeed>Restricted</defaultthrownspeed>
     <turnout feedback="BSTURNOUT" inverted="false" automate="Off">
-      <systemName>IT100</systemName>
+      <systemName>DT100</systemName>
     </turnout>
     <turnout feedback="BSTURNOUT" inverted="false" automate="Off">
-      <systemName>IT200</systemName>
+      <systemName>DT200</systemName>
     </turnout>
     <turnout feedback="BSOUTPUT" inverted="false" automate="Off">
       <systemName>DT526</systemName>
