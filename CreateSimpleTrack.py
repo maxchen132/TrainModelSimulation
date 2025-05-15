@@ -13,22 +13,13 @@ x1 = np.linspace(0, straight_len, num_points_straight)
 y1 = np.zeros_like(x1)
 
 # Right semicircle (top right to bottom right)
-theta1 = np.linspace(-np.pi/2, np.pi/2, num_points_curve)
+theta1 = np.linspace(-np.pi/2, 0, num_points_curve)
 x2 = (straight_len) + curve_radius * np.cos(theta1)
 y2 = curve_radius +  curve_radius * np.sin(theta1)
 
-# Bottom straight segment (bottom right to bottom left)
-x3 = np.linspace(straight_len, 0, num_points_straight)
-y3 = np.full_like(x3, 2 * curve_radius)
-
-# Left semicircle (bottom left to top left)
-theta2 = np.linspace(np.pi/2, 3*np.pi/2, num_points_curve)
-x4 = curve_radius * np.cos(theta2)
-y4 = curve_radius + curve_radius * np.sin(theta2)
-
 # Combine
-x_full = np.concatenate([x1, x2, x3, x4])
-y_full = np.concatenate([y1, y2, y3, y4])
+x_full = np.concatenate([x1, x2])
+y_full = np.concatenate([y1, y2])
 z_full = np.zeros_like(x_full)
 r_full = np.vstack((x_full, y_full, z_full)).T
 
@@ -46,15 +37,15 @@ drds_table = np.column_stack((s, drds))
 d2rds2_table = np.column_stack((s, d2rds2))
 
 # Plot to visualize
-# plt.figure(figsize=(8, 4))
-# plt.plot(x_full, y_full, label='Flat Track')
-# plt.gca().set_aspect('equal')
-# plt.xlabel('X [m]')
-# plt.ylabel('Y [m]')
-# plt.title('Flat Track Visualizer')
-# plt.grid(True)
-# plt.legend()
-# plt.show()
+plt.figure(figsize=(8, 4))
+plt.plot(x_full, y_full, label='Flat Track')
+plt.gca().set_aspect('equal')
+plt.xlabel('X [m]')
+plt.ylabel('Y [m]')
+plt.title('Flat Track Visualizer')
+plt.grid(True)
+plt.legend()
+plt.show()
 
 # Save .mat file for Modelica
 savemat('TrackTable.mat', {
