@@ -27,14 +27,14 @@ package TrainP3
     
     // Trajectory Data
     parameter SI.Length b = 1.0 "Track gauge";
-    parameter String TableFile = "/Users/nathanyao/files/cs/Open-Modelica/TrainModelSimulation/TrackTable.mat";
+    parameter String TableFile = "/home/debian/files/cs/Open-Modelica/TrainModelSimulation/TrackTable.mat";
     CombiTable1Ds RS(fileName = TableFile, tableName = "r", columns = {2,3,4}, tableOnFile = true, smoothness = ConstantSegments);
     CombiTable1Ds DRDS(fileName = TableFile, tableName = "drds", columns = {2,3,4}, tableOnFile = true, smoothness = ConstantSegments);
     CombiTable1Ds D2RDS2(fileName = TableFile, tableName = "d2rds2", columns = {2,3,4}, tableOnFile = true, smoothness = ConstantSegments);
     
     // Inputs and Outputs
-    Locomotives.Coupling cf, ct;
-    Locomotives.RotationalCoupling wheel;
+    TrainP3.WagonCoupling cf, ct;
+    TrainP3.RotationalCoupling wheel;
     Interfaces.RealOutput s(start=0), v;
     
     // Variables
@@ -87,7 +87,7 @@ package TrainP3
     der(wheel.phi) * R = v;
     
     // External connections
-    connect(s, Rs.u);
+    connect(s, RS.u);
     connect(s, DRDS.u);
     connect(s, D2RDS2.u);
     cf.s = s + len/2;
@@ -108,7 +108,7 @@ package TrainP3
 
   model Test_Composition
   // Railway track table
-    Locomotives.GeneralInfo Track(file = "/Users/nathanyao/files/cs/Open-Modelica/TrainModelSimulation/TrackTable.mat");
+    Locomotives.GeneralInfo Track(file = "/home/debian/files/cs/Open-Modelica/TrainModelSimulation/TrackTable.mat");
     // Train Composition
     Locomotives.ConnectMassAlongPath locomotive(R = 0.96, TableFile = Track.file,
     b = 1, len = 13.8);
