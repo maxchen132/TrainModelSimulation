@@ -11,9 +11,9 @@ package TrainP3
     constant SI.Acceleration g[3] = {0,0,-10};
     
     // Wagon/Locomotive Parameters
-    parameter SI.Mass m = 800 "Total mass";
-    parameter SI.Radius R = 0.005 "Traction wheel radius";
-    parameter SI.Length len = 0.1 "Length of the wagon/locomotive";
+    parameter SI.Mass m = 167000 "Total mass";
+    parameter SI.Radius R = 0.5 "Traction wheel radius";
+    parameter SI.Length len = 10 "Length of the wagon/locomotive";
     parameter SI.Efficiency eta_mec = 0.98 "Mechanical torque transmission
     efficiency";
     
