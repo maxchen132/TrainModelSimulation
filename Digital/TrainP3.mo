@@ -27,7 +27,7 @@ package TrainP3
     
     // Trajectory Data
     parameter SI.Length b = 1.0 "Track gauge";
-    parameter String TableFile = "/c/Users/mchen/Documents/Repositories/TrainModelSimulation/TrackTable.mat";
+    parameter String TableFile = "C:/Users/mchen/Documents/Repositories/TrainModelSimulation/Digital/TrackTable.mat";
     CombiTable1Ds RS(fileName = TableFile, tableName = "r", columns = {2,3,4}, tableOnFile = true, smoothness = ConstantSegments);
     CombiTable1Ds DRDS(fileName = TableFile, tableName = "drds", columns = {2,3,4}, tableOnFile = true, smoothness = ConstantSegments);
     CombiTable1Ds D2RDS2(fileName = TableFile, tableName = "d2rds2", columns = {2,3,4}, tableOnFile = true, smoothness = ConstantSegments);

@@ -3,9 +3,14 @@ import jarray
 
 class TrainTest(jmri.jmrit.automat.AbstractAutomaton) :
     def init(self):
-        # init() is called exactly once at the beginning to do
+        # init() is called exact    ly once at the beginning to do
         # any necessary configuration.
         print("Inside init(self)")
+
+        # set up sensor numbers
+        # fwdSensor is reached when loco is running forward
+        self.firstSensor = sensors.provideSensor("DS35")
+        self.secondSensor = sensors.provideSensor("DS36")
 
         # get loco address. For long address change "False" to "True"
         self.throttle = self.getThrottle(111, False)  # short address 111
@@ -21,30 +26,36 @@ class TrainTest(jmri.jmrit.automat.AbstractAutomaton) :
         print("Set Loco Forward")
         self.throttle.setIsForward(True)
 
-        # wait 1 second for layout to catch up, then set speed
-        self.waitMsec(1000)
+        # wait for sensor to (de)activate before starting
+        print("Wait for Forward Sensor")
+        self.waitSensorInactive(self.firstSensor)
+
         print("Set Speed")
-        self.throttle.setSpeedSetting(0.5)
+        self.throttle.setSpeedSetting(0.3)
         
-        print("wait 5 seconds")
-        self.waitMsec(5000)          # wait for 5 seconds
+        # stop when sensor is activated
+        print("Wait for Stop Sensor")
+        self.waitSensorActive(self.firstSensor)
+
         print("Set Speed Stop")
         self.throttle.setSpeedSetting(0)
-
-        self.waitMsec(5000)           # wait for 5 seconds
 
         print("Set Loco Reverse")
         self.throttle.setIsForward(False)
-        self.waitMsec(1000)                 # wait 1 second for Xpressnet to catch up
-        print("Set Speed")
-        self.throttle.setSpeedSetting(0.5)
 
-        print("wait 5 seconds")
-        self.waitMsec(5000)          # wait for 5 seconds
+        # wait for sensor to (de)activate before starting
+        print("Wait for Backwards Sensor")
+        self.waitSensorInactive(self.firstSensor)
+
+        print("Set Speed")
+        self.throttle.setSpeedSetting(0.3)
+
+        # stop when sensor is activated
+        print("Wait for Stop Sensor")
+        self.waitSensorActive(self.firstSensor)
+
         print("Set Speed Stop")
         self.throttle.setSpeedSetting(0)
-
-        self.waitMsec(5000)           # wait for 5 seconds
 
         # and continue around again
         print("End of Loop")
