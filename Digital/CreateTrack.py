@@ -1,10 +1,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.io import savemat
+from mpl_toolkits.mplot3d import Axes3D
 
 # Constants
-straight_len = 1.364  # in meters (1364 mm)
-curve_radius = 0.315  # in meters (315 mm)
+straight_len = 10  # in meters (1364 mm)
+curve_radius = 1.0  # in meters (315 mm)
 num_points_straight = 100
 num_points_curve = 100
 
@@ -59,13 +60,22 @@ d2rds2_table = np.column_stack((s, d2rds2))
 # Plot to visualize
 plt.figure(figsize=(8, 4))
 plt.plot(x_full, y_full, label='Flat Track')
+
+# add arrows to indicate direction
+for i in range(0, len(x_full) - 1, 10):  # adjust step size for density
+    dx = x_full[i+1] - x_full[i]
+    dy = y_full[i+1] - y_full[i]
+    plt.arrow(x_full[i], y_full[i], dx, dy,
+              shape='full', head_width=0.05, head_length=0.1, color='red')
+
 plt.gca().set_aspect('equal')
 plt.xlabel('X [m]')
 plt.ylabel('Y [m]')
-plt.title('Flat Track Visualizer')
+plt.title('Flat Track Visualizer with Direction')
 plt.grid(True)
 plt.legend()
 plt.show()
+
 
 # Save .mat file for Modelica
 savemat('TrackTable.mat', {
@@ -73,4 +83,5 @@ savemat('TrackTable.mat', {
     'drds': drds_table,
     'd2rds2': d2rds2_table
 })
+
 
