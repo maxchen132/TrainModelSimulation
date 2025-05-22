@@ -13,8 +13,8 @@ class TrainTest(jmri.jmrit.automat.AbstractAutomaton) :
         self.secondSensor = sensors.provideSensor("DS36")
 
         # get loco address. For long address change "False" to "True"
-        self.throttle = self.getThrottle(111, False)  # short address 111
-        #self.throttle = self.getThrottle(2586, True)  # long address 2586
+        self.throttle1 = self.getThrottle(111, False)  # short address 111
+        self.throttle2 = self.getThrottle(2586, True)  # long address 2586
 
         return  
 
@@ -24,38 +24,38 @@ class TrainTest(jmri.jmrit.automat.AbstractAutomaton) :
 
         # set loco to forward
         print("Set Loco Forward")
-        self.throttle.setIsForward(True)
+        self.throttle1.setIsForward(True)
 
         # wait for sensor to (de)activate before starting
         print("Wait for Forward Sensor")
         self.waitSensorInactive(self.firstSensor)
 
         print("Set Speed")
-        self.throttle.setSpeedSetting(0.3)
+        self.throttle1.setSpeedSetting(0.3)
         
         # stop when sensor is activated
         print("Wait for Stop Sensor")
         self.waitSensorActive(self.firstSensor)
 
         print("Set Speed Stop")
-        self.throttle.setSpeedSetting(0)
+        self.throttle1.setSpeedSetting(0)
 
         print("Set Loco Reverse")
-        self.throttle.setIsForward(False)
+        self.throttle1.setIsForward(False)
 
         # wait for sensor to (de)activate before starting
         print("Wait for Backwards Sensor")
         self.waitSensorInactive(self.firstSensor)
 
         print("Set Speed")
-        self.throttle.setSpeedSetting(0.3)
+        self.throttle1.setSpeedSetting(0.3)
 
         # stop when sensor is activated
         print("Wait for Stop Sensor")
         self.waitSensorActive(self.firstSensor)
 
         print("Set Speed Stop")
-        self.throttle.setSpeedSetting(0)
+        self.throttle1.setSpeedSetting(0)
 
         # and continue around again
         print("End of Loop")
