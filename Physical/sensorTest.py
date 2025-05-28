@@ -9,8 +9,8 @@ class TrainTest(jmri.jmrit.automat.AbstractAutomaton) :
 
         # set up sensor numbers
         # fwdSensor is reached when loco is running forward
-        self.firstSensor = sensors.provideSensor("DS35")
-        self.secondSensor = sensors.provideSensor("DS36")
+        self.firstSensor = sensors.provideSensor("DS36")
+        self.secondSensor = sensors.provideSensor("DS35")
 
         # get loco address. For long address change "False" to "True"
         self.throttle1 = self.getThrottle(111, False)  # short address 111
