@@ -112,27 +112,7 @@ from javax.swing import JScrollPane
 from javax.swing import JTextArea
 from javax.swing import JTextField
 from javax.swing import JToggleButton
-from javax.swing import JSpinner
-from javax.swing import SpinnerNumberModel
-
-from javax.swing.event import ChangeListener
-
-from javax.swing.filechooser import FileFilter
-
-from math import sqrt
-
-from time import sleep
-
-from thread import start_new_thread
-
-# JMRI imports
-
-from jmri import Block
-from jmri import DccThrottle
-from jmri import InstanceManager
-from jmri import PowerManager
-from jmri import Section
-from jmri import SectionManager
+from javax.swing import JSpinnafrom jmri import SectionManager
 from jmri import Sensor
 from jmri import SignalHead
 from jmri import Turnout
