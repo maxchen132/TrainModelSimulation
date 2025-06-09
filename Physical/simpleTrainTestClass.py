@@ -8,8 +8,8 @@ class TrainTest(jmri.jmrit.automat.AbstractAutomaton) :
         print("Inside init(self)")
 
         # get loco address. For long address change "False" to "True"
-        self.throttle = self.getThrottle(111, False)  # short address 111
-        #self.throttle = self.getThrottle(2586, True)  # long address 2586
+        #self.throttle = self.getThrottle(111, False)  # short address 111
+        self.throttle = self.getThrottle(2586, True)  # long address 2586
 
         return  
 
