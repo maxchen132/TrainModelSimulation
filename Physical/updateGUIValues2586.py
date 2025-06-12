@@ -43,7 +43,7 @@ class UpdateGUI(jmri.jmrit.automat.AbstractAutomaton) :
         else:
             self.ptcOverriden = False
 
-        currentSpeed = round(self.throttle1.getSpeedSetting(), 2)
+        currentSpeed = self.throttle1.getSpeedSetting()
 
         # logic for PTC, can be expanded
         if not self.ptcOverriden:
