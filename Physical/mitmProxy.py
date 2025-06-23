@@ -74,16 +74,16 @@ async def forward(reader: asyncio.StreamReader,
         # 4) Buffer it for potential future replay
         REPLAY_BUFFER.append(data)
 
-async def handle_client(local_reader, local_writer):
+async def connect_remote():
     # Connect to the real server
+    global remote_reader, remote_writer
     try:
         remote_reader, remote_writer = await asyncio.open_connection(remote_host, remote_port)
     except Exception as e:
         print("Could not connect to remote:", e)
-        local_writer.close()
-        await local_writer.wait_closed()
         return
 
+async def handle_client(local_reader, local_writer):
     # Launch bidirectional forwarding
     await asyncio.gather(
         forward(local_reader,  remote_writer, "C→S"),
@@ -98,6 +98,8 @@ def main():
 
     remote_host, remote_port = args.remote.split(":")
     remote_port = int(remote_port)
+
+    connect_remote()
 
     loop = asyncio.get_event_loop()
     server = asyncio.start_server(handle_client, "0.0.0.0", args.listen)
