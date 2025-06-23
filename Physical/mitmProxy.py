@@ -21,14 +21,16 @@ def should_drop(data: bytes) -> bool:
     Return True if you want to *drop* this frame instead of forwarding.
     E.g. random drop of 10%:
     """
-    return random.random() < 0.1
+    #return random.random() < 0.1
+    return False
 
 def should_replay(data: bytes) -> bool:
     """
     Return True if you want to *replay* an earlier frame before forwarding this one.
     E.g. on 5% of frames:
     """
-    return random.random() < 0.05
+    #return random.random() < 0.05
+    return False
 
 def pick_replay() -> bytes:
     """
