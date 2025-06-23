@@ -16,6 +16,10 @@ REPLAY_BUFFER = deque(maxlen=100)
 remote_host = "localhost"
 remote_port = 5000
 
+remote_reader = None
+remote_writer = None
+
+
 def should_drop(data: bytes) -> bool:
     """
     Return True if you want to *drop* this frame instead of forwarding.
@@ -93,6 +97,8 @@ async def handle_client(local_reader, local_writer):
     )
 
 def main():
+    global remote_host, remote_port, remote_reader, remote_writer
+
     p = argparse.ArgumentParser(description="Simple TCP MITM proxy with drop/replay hooks")
     p.add_argument("--listen",   type=int, required=True, help="Local port to listen on")
     p.add_argument("--remote",   required=True,   help="Remote host:port to connect to")
