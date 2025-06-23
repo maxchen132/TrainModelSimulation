@@ -5,8 +5,8 @@ import random
 from collections import deque
 
 # To run the proxy, run the following:
-# python mitmProxy.py --listen 4000 --remote <ser2net_ip>:<ser2net_port>
-# connect to localhost:4000 on PanelPro
+# python mitmProxy.py --listen 5000 --remote <ser2net_ip>:<ser2net_port>
+# connect using DCC Ethernet on PanelPro
 
 
 # A little circular buffer of the last N messages for replaying
@@ -15,10 +15,6 @@ REPLAY_BUFFER = deque(maxlen=100)
 # default assignments, global declarations
 remote_host = "localhost"
 remote_port = 5000
-
-remote_reader = None
-remote_writer = None
-
 
 def should_drop(data: bytes) -> bool:
     """
@@ -80,25 +76,34 @@ async def forward(reader: asyncio.StreamReader,
         # 4) Buffer it for potential future replay
         REPLAY_BUFFER.append(data)
 
-async def connect_remote():
-    # Connect to the real server
-    global remote_reader, remote_writer
+async def handle_client(local_reader, local_writer):
     try:
         remote_reader, remote_writer = await asyncio.open_connection(remote_host, remote_port)
     except Exception as e:
         print("Could not connect to remote:", e)
+        local_writer.close()
+        await local_writer.wait_closed()
         return
 
-async def handle_client(local_reader, local_writer):
-    # Launch bidirectional forwarding
-    await asyncio.gather(
-        forward(local_reader,  remote_writer, "C→S"),
-        forward(remote_reader, local_writer,  "S→C"),
+    # start the two forwarding tasks
+    t1 = asyncio.create_task(forward(local_reader,  remote_writer, "C→S"))
+    t2 = asyncio.create_task(forward(remote_reader, local_writer,  "S→C"))
+    done, pending = await asyncio.wait(
+        {t1, t2},
+        return_when=asyncio.FIRST_COMPLETED
     )
 
-def main():
-    global remote_host, remote_port, remote_reader, remote_writer
+    # once one side is done (or errored), cancel the other
+    for task in pending:
+        task.cancel()
 
+    # now clean up both ends
+    for w in (local_writer, remote_writer):
+        if not w.is_closing():
+            w.close()
+            await w.wait_closed()
+
+def main():
     p = argparse.ArgumentParser(description="Simple TCP MITM proxy with drop/replay hooks")
     p.add_argument("--listen",   type=int, required=True, help="Local port to listen on")
     p.add_argument("--remote",   required=True,   help="Remote host:port to connect to")
@@ -106,8 +111,6 @@ def main():
 
     remote_host, remote_port = args.remote.split(":")
     remote_port = int(remote_port)
-
-    connect_remote()
 
     loop = asyncio.get_event_loop()
     server = asyncio.start_server(handle_client, "0.0.0.0", args.listen)
