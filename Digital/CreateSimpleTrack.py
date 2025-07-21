@@ -57,7 +57,7 @@ r_table = np.column_stack((s, r_full))
 drds_table = np.column_stack((s, drds))
 d2rds2_table = np.column_stack((s, d2rds2))
 
-savemat('TrackTable.mat', {
+savemat('Digital/TrackTableSimple.mat', {
     'r': r_table,
     'drds': drds_table,
     'd2rds2': d2rds2_table
@@ -82,8 +82,3 @@ ax.set_ylabel('Y [m]')
 ax.set_title('2D Flat Track Visualizer with Direction')
 plt.legend()
 plt.show()
-
-
-# Save .mat file for Modelica
-
-

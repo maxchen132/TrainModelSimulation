@@ -35,8 +35,8 @@ package TrainP3
       SI.Position r[3];
       Real t[3], n[3];
       SI.Acceleration gt, gn, at, an;
-      Real curvatura(min=1e-10), k_Fatrito;
-      SI.Radius raio(min=1e-10);
+      Real curvatura, k_Fatrito; // track curvature (1/m)
+      SI.Radius raio; // radius of curvature (m)
       SI.Force Fincl, Fatrito, Fcurva, Fmot, Fn;
       SI.Conversions.NonSIunits.Velocity_kmh v_kmh;
       
@@ -50,8 +50,15 @@ package TrainP3
       at = der(v);
       v_kmh = SI.Conversions.to_kmh(v);
       curvatura = length(n);
-      curvatura*raio = 1;
-      an = v ^ 2 * curvatura;
+      // allow straight segments (curvature = 0)
+      if curvatura > 0 then
+        raio = 1/curvatura;
+        an   = v^2 * curvatura;
+      else
+      // on straight, radius infinite, no normal accel
+        raio = Modelica.Constants.inf;
+        an   = 0;
+      end if;
       gt = g * t;
       gn = g * normalize(n);
   // Slope force
@@ -65,8 +72,12 @@ package TrainP3
         k_Fatrito = sign(v_kmh);
       end if;
       Fatrito = -k_Fatrito*(A+C*v_kmh^2+B*abs(v_kmh))*m*length(g);
-  // Curvature force
-      Fcurva = -(0.5*b*curvatura)*m*length(g);
+     // Curvature force (zero on straight)
+      if curvatura > 1e-10 then
+        Fcurva = -0.5 * b * curvatura * m * length(g);
+      else
+        Fcurva = 0;
+      end if;
   // Newton’s second law applied to mass moving along a path
       m * at = Fmot + Fincl + Fatrito + Fcurva + cf.F + ct.F;
       m * an = Fn + m * gn;
@@ -108,7 +119,7 @@ package TrainP3
     //3.5116e-8, TableFile = Track.file, b = 1, m = 300000);
     // Traction system
     Modelica.Blocks.Math.Feedback sum;
-    Modelica.Blocks.Sources.Ramp ramp(duration = 240, height = 60 / 3.6); // height = 60 / 3.6
+    Modelica.Blocks.Sources.Ramp ramp(duration = 240, height = 60 / 3.6); // duration = 240, height = 60 / 3.6
     Modelica.Blocks.Continuous.PID PID(Td = 0, Ti = 2, k = 200000);
     Modelica.Mechanics.Rotational.Sources.Torque motor;
    equation

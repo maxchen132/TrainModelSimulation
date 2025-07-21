@@ -78,7 +78,7 @@ plt.show()
 
 
 # Save .mat file for Modelica
-savemat('TrackTable.mat', {
+savemat('Digital/TrackTable.mat', {
     'r': r_table,
     'drds': drds_table,
     'd2rds2': d2rds2_table
