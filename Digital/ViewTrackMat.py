@@ -1,23 +1,40 @@
-# run in jupyter notebook
-
 import numpy as np
-import pandas as pd
+import matplotlib.pyplot as plt
 from scipy.io import loadmat
+import sys
 
-# 1. Load the .mat file
-data = loadmat(r'C:\Users\mchen\Documents\Repositories\TrainModelSimulation\Digital\TrackTable.mat')
+# Optional: pass the filename as a command line argument
+if len(sys.argv) > 1:
+    filename = sys.argv[1]
+else:
+    filename = 'TrackTable.mat'  # fallback default
 
-# 2. Extract arrays
-r_array     = data['r']      # shape (N, 4): [s, x, y, z]
-drds_array  = data['drds']   # shape (N, 4): [s, dr/ds]
-d2rds2_array= data['d2rds2'] # shape (N, 4): [s, d2r/ds2]
+# Load .mat file
+data = loadmat(filename)
 
-# 3. Build DataFrames
-df_r = pd.DataFrame(r_array, columns=['s [m]', 'x [m]', 'y [m]', 'z [m]'])
-df_drds = pd.DataFrame(drds_array, columns=['s [m]', 'dx/ds', 'dy/ds', 'dz/ds'])
-df_d2rds2 = pd.DataFrame(d2rds2_array, columns=['s [m]', 'd2x/ds2', 'd2y/ds2', 'd2z/ds2'])
+# Extract positions (r = [s, x, y, z])
+r_array = data['r']  # shape (N, 4)
+s = r_array[:, 0]
+x = r_array[:, 1]
+y = r_array[:, 2]
 
-# 4. Display every 10th row
-display(df_r.iloc[::10, :])
-display(df_drds.iloc[::10, :])
-display(df_d2rds2.iloc[::10, :])
+# Visualize
+fig, ax = plt.subplots(figsize=(8, 6))
+ax.plot(x, y, label='Track')
+
+# Draw direction arrows
+for i in range(0, len(x) - 1, 10):
+    dx = x[i+1] - x[i]
+    dy = y[i+1] - y[i]
+    ax.arrow(x[i], y[i], dx, dy,
+             shape='full', head_width=2, head_length=1, color='red')
+
+ax.set_xlabel('X [m]')
+ax.set_ylabel('Y [m]')
+ax.set_title(f'Track Visualizer: {filename}')
+ax.legend()
+plt.axis('equal')
+plt.tight_layout()
+plt.show()
+
+
