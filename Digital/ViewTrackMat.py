@@ -7,7 +7,7 @@ import sys
 if len(sys.argv) > 1:
     filename = sys.argv[1]
 else:
-    filename = 'TrackTable.mat'  # fallback default
+    filename = 'Digital/TrackTable.mat'  # fallback default
 
 # Load .mat file
 data = loadmat(filename)

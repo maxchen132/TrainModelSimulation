@@ -36,7 +36,7 @@ package TrainP3
       Real t[3], n[3];
       SI.Acceleration gt, gn, at, an;
       Real curvatura, k_Fatrito; // track curvature (1/m)
-      SI.Radius raio; // radius of curvature (m)
+      // SI.Radius raio; // radius of curvature (m)
       SI.Force Fincl, Fatrito, Fcurva, Fmot, Fn;
       SI.Conversions.NonSIunits.Velocity_kmh v_kmh;
       
@@ -51,17 +51,17 @@ package TrainP3
       v_kmh = SI.Conversions.to_kmh(v);
       curvatura = length(n);
       // allow straight segments (curvature = 0)
-      if curvatura > 0 then
-        raio = 1/curvatura;
+      //if curvatura > 0 then
+        // raio = 1/curvatura;
         an   = v^2 * curvatura;
-      else
+      //else
       // on straight, radius infinite, no normal accel
-        raio = Modelica.Constants.inf;
-        an   = 0;
-      end if;
+        // raio = Modelica.Constants.inf;
+        //an   = 0;
+      //end if;
       gt = g * t;
       gn = g * normalize(n);
-  // Slope force
+  // Slope forceF
       Fincl = m * gt;
   // Friction force
       if abs(v_kmh) <= epsf then
@@ -73,11 +73,11 @@ package TrainP3
       end if;
       Fatrito = -k_Fatrito*(A+C*v_kmh^2+B*abs(v_kmh))*m*length(g);
      // Curvature force (zero on straight)
-      if curvatura > 1e-10 then
+      //if curvatura > 1e-10 then
         Fcurva = -0.5 * b * curvatura * m * length(g);
-      else
-        Fcurva = 0;
-      end if;
+      //else
+      //  Fcurva = 0;
+      //end if;
   // Newton’s second law applied to mass moving along a path
       m * at = Fmot + Fincl + Fatrito + Fcurva + cf.F + ct.F;
       m * an = Fn + m * gn;
@@ -105,10 +105,11 @@ package TrainP3
 
   model Test_Composition
   // Railway track table
-    TrainP3.GeneralInfo Track(file = "C:\\Users\\mchen\\Documents\\Repositories\\TrainModelSimulation\\Digital\\TrackTable.mat");
+    TrainP3.GeneralInfo Track(file = "C:\\Users\\mchen\\Documents\\Repositories\\TrainModelSimulation\\Digital\\TrackTableOval.mat");
     // Train Composition
+    parameter Modelica.SIunits.Length sEnd = 20 + Modelica.Constants.pi * 2 "Total track length (for circle R=5m)";   // 63.46
     TrainP3.WagonAlongPath locomotive(R = 0.96, TableFile = Track.file,
-    b = 1, len = 13.8);
+    b = 1, len = 1);
     //TrainP3.WagonAlongPath wagon1(A = 8.253e-4, B = 1.405e-5, C =
     //3.5116e-8, TableFile = Track.file, b = 1, m = 300000);
     //TrainP3.WagonAlongPath wagon2(A = 8.253e-4, B = 1.405e-5, C =
@@ -119,7 +120,7 @@ package TrainP3
     //3.5116e-8, TableFile = Track.file, b = 1, m = 300000);
     // Traction system
     Modelica.Blocks.Math.Feedback sum;
-    Modelica.Blocks.Sources.Ramp ramp(duration = 240, height = 60 / 3.6); // duration = 240, height = 60 / 3.6
+    Modelica.Blocks.Sources.Ramp ramp(duration = 2, height = 60 / 3.6); // duration = 240, height = 60 / 3.6
     Modelica.Blocks.Continuous.PID PID(Td = 0, Ti = 2, k = 200000);
     Modelica.Mechanics.Rotational.Sources.Torque motor;
    equation
@@ -132,6 +133,13 @@ package TrainP3
     //connect(locomotive.ct, wagon1.cf); // connects locomotive to first wagon
     connect(sum.y, PID.u); // result of feedback passed into PID?
     connect(sum.u1, ramp.y); // desired speed passed into feedback
+    
+    // 2) When s reaches or exceeds sEnd, terminate simulation
+    when locomotive.s >= sEnd then
+      Modelica.Utilities.Streams.print(
+        "Reached end of track at s=" + String(locomotive.s) + "m");
+      terminate("End of track reached");
+    end when;
   end Test_Composition;
 
   record GeneralInfo
