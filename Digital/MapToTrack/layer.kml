@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>Untitled layer</name>
+    <Style id="line-000000-1200-nodesc-normal">
+      <LineStyle>
+        <color>ff000000</color>
+        <width>1.2</width>
+      </LineStyle>
+      <BalloonStyle>
+        <text><![CDATA[<h3>$[name]</h3>]]></text>
+      </BalloonStyle>
+    </Style>
+    <Style id="line-000000-1200-nodesc-highlight">
+      <LineStyle>
+        <color>ff000000</color>
+        <width>1.8</width>
+      </LineStyle>
+      <BalloonStyle>
+        <text><![CDATA[<h3>$[name]</h3>]]></text>
+      </BalloonStyle>
+    </Style>
+    <StyleMap id="line-000000-1200-nodesc">
+      <Pair>
+        <key>normal</key>
+        <styleUrl>#line-000000-1200-nodesc-normal</styleUrl>
+      </Pair>
+      <Pair>
+        <key>highlight</key>
+        <styleUrl>#line-000000-1200-nodesc-highlight</styleUrl>
+      </Pair>
+    </StyleMap>
+    <Placemark>
+      <name>RANDOM LINE</name>
+      <styleUrl>#line-000000-1200-nodesc</styleUrl>
+      <LineString>
+        <tessellate>1</tessellate>
+        <coordinates>
+          130.7628552,33.8560341,0
+          130.7646147,33.8560697,0
+          130.7671467,33.8563905,0
+          130.7702795,33.8575309,0
+          130.7724682,33.8590277,0
+          130.7750002,33.8599186,0
+          130.7778755,33.860168,0
+          130.7800642,33.859883,0
+          130.7817808,33.8592058,0
+          130.7829395,33.8578516,0
+          130.7835833,33.8557846,0
+          130.7839266,33.8544303,0
+          130.7839266,33.8523989,0
+          130.783197,33.8513653,0
+          130.7813517,33.8490486,0
+          130.780193,33.8466606,0
+          130.7807938,33.8454487,0
+          130.7830254,33.8446646,0
+          130.7860724,33.84552,0
+          130.7873598,33.8469814,0
+          130.7884327,33.8491199,0
+          130.7890335,33.8514722,0
+          130.7889048,33.8530047,0
+          130.7890335,33.8544303,0
+          130.7896773,33.85525,0
+          130.7907501,33.8551431,0
+          130.7919518,33.8536819,0
+          130.7917372,33.8508663,0
+          130.7910935,33.8477299,0
+          130.7900206,33.8456626,0
+          130.788304,33.844023,0
+          130.7863299,33.8434527,0
+          130.781695,33.8424547,0
+          130.7761589,33.8417061,0
+          130.7729832,33.8433101,0
+          130.7684342,33.8451992,0
+        </coordinates>
+      </LineString>
+    </Placemark>
+  </Document>
+</kml>
