@@ -90,14 +90,14 @@ package TrainP3
       wheel.tau = Fmot * R * eta_mec;
       der(wheel.phi) * R = v;
   // External connections
-    //  connect(s, RS.u);
-    //  connect(s, DRDS.u);
-    //  connect(s, D2RDS2.u);
+      connect(s, RS.u);
+      connect(s, DRDS.u);
+      connect(s, D2RDS2.u);
       
       // feed the tables with wrapped coordinate
-      connect(s_wrap, RS.u);
-      connect(s_wrap, DRDS.u);
-      connect(s_wrap, D2RDS2.u);
+      //connect(s_wrap, RS.u);
+      //connect(s_wrap, DRDS.u);
+      //connect(s_wrap, D2RDS2.u);
       cf.s = s + len/2;
       ct.s = s - len/2;
     end WagonAlongPath;
@@ -116,7 +116,7 @@ package TrainP3
   model Test_Composition
   // Railway track table
     TrainP3.GeneralInfo Track(file = "C:\\Users\\mchen\\Documents\\Repositories\\TrainModelSimulation\\Digital\\TrackTable.mat");
-    parameter Modelica.SIunits.Length sEnd = 20 + Modelica.Constants.pi * 2 * 2 "Total track length";   // 63.46
+    parameter Modelica.SIunits.Length sEnd = 136 * 2 + Modelica.Constants.pi * 2 * 31 "Total track length";   // 63.46
     // Train Composition
     
     TrainP3.WagonAlongPath locomotive(R = 0.96, TableFile = Track.file,
@@ -131,11 +131,11 @@ package TrainP3
     //3.5116e-8, TableFile = Track.file, b = 1, m = 300000);
     // Traction system
     Modelica.Blocks.Math.Feedback sum;
-    Modelica.Blocks.Sources.Ramp ramp(duration = 2, height = 60 / 3.6); // duration = 240, height = 60 / 3.6
+    Modelica.Blocks.Sources.Ramp ramp(duration = 2, height = 180 / 3.6); // duration = 240, height = 60 / 3.6
     Modelica.Blocks.Continuous.PID PID(Td = 0, Ti = 2, k = 200000);
     Modelica.Mechanics.Rotational.Sources.Torque motor;
    equation
-    locamotive.sEnd = sEnd;
+    //locomotive.sEnd = sEnd;
     //connect(wagon2.cf, wagon1.ct); // connects first two wagons
     //connect(wagon3.cf, wagon2.ct); // connects second pair of wagons
     //connect(wagon4.cf, wagon3.ct); // connects third pair of wagons
@@ -147,11 +147,11 @@ package TrainP3
     connect(sum.u1, ramp.y); // desired speed passed into feedback
     
     // 2) When s reaches or exceeds sEnd, terminate simulation
-    //when locomotive.s >= Track.sEnd then
-      //Modelica.Utilities.Streams.print(
-      //  "Reached end of track at s=" + String(locomotive.s) + "m");
-      //terminate("End of track reached");
-    //end when;
+    when locomotive.s >= sEnd then
+      Modelica.Utilities.Streams.print(
+        "Reached end of track at s=" + String(locomotive.s) + "m");
+      terminate("End of track reached");
+    end when;
   end Test_Composition;
 
   record GeneralInfo
