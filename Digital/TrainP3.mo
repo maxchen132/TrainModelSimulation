@@ -30,7 +30,7 @@ package TrainP3
       // Inputs and Outputs
       TrainP3.WagonCoupling cf, ct;
       TrainP3.RotationalCoupling wheel;
-      Interfaces.RealOutput s(start=0), v;
+      Interfaces.RealOutput s(start=0), s_wrap, v;
       // Variables
       SI.Position r[3];
       Real t[3], n[3];
@@ -40,6 +40,7 @@ package TrainP3
       SI.Force Fincl, Fatrito, Fcurva, Fmot, Fn;
       SI.Conversions.NonSIunits.Velocity_kmh v_kmh;
       
+      parameter Modelica.SIunits.Length sEnd = 20 + Modelica.Constants.pi * 2 * 2 "Total track length";   // 63.46
     equation
   // Trajectory data
       r = RS.y;
@@ -47,6 +48,10 @@ package TrainP3
       n = D2RDS2.y;
   // Variables
       der(s) = v;
+      
+      // wrap s back into [0, sEnd)
+      s_wrap = if s < sEnd then s else mod(s, sEnd);
+      
       at = der(v);
       v_kmh = SI.Conversions.to_kmh(v);
       curvatura = length(n);
@@ -85,9 +90,14 @@ package TrainP3
       wheel.tau = Fmot * R * eta_mec;
       der(wheel.phi) * R = v;
   // External connections
-      connect(s, RS.u);
-      connect(s, DRDS.u);
-      connect(s, D2RDS2.u);
+    //  connect(s, RS.u);
+    //  connect(s, DRDS.u);
+    //  connect(s, D2RDS2.u);
+      
+      // feed the tables with wrapped coordinate
+      connect(s_wrap, RS.u);
+      connect(s_wrap, DRDS.u);
+      connect(s_wrap, D2RDS2.u);
       cf.s = s + len/2;
       ct.s = s - len/2;
     end WagonAlongPath;
@@ -105,9 +115,10 @@ package TrainP3
 
   model Test_Composition
   // Railway track table
-    TrainP3.GeneralInfo Track(file = "C:\\Users\\mchen\\Documents\\Repositories\\TrainModelSimulation\\Digital\\TrackTableOval.mat");
+    TrainP3.GeneralInfo Track(file = "C:\\Users\\mchen\\Documents\\Repositories\\TrainModelSimulation\\Digital\\TrackTable.mat");
+    parameter Modelica.SIunits.Length sEnd = 20 + Modelica.Constants.pi * 2 * 2 "Total track length";   // 63.46
     // Train Composition
-    parameter Modelica.SIunits.Length sEnd = 20 + Modelica.Constants.pi * 2 "Total track length (for circle R=5m)";   // 63.46
+    
     TrainP3.WagonAlongPath locomotive(R = 0.96, TableFile = Track.file,
     b = 1, len = 1);
     //TrainP3.WagonAlongPath wagon1(A = 8.253e-4, B = 1.405e-5, C =
@@ -124,6 +135,7 @@ package TrainP3
     Modelica.Blocks.Continuous.PID PID(Td = 0, Ti = 2, k = 200000);
     Modelica.Mechanics.Rotational.Sources.Torque motor;
    equation
+    locamotive.sEnd = sEnd;
     //connect(wagon2.cf, wagon1.ct); // connects first two wagons
     //connect(wagon3.cf, wagon2.ct); // connects second pair of wagons
     //connect(wagon4.cf, wagon3.ct); // connects third pair of wagons
@@ -135,11 +147,11 @@ package TrainP3
     connect(sum.u1, ramp.y); // desired speed passed into feedback
     
     // 2) When s reaches or exceeds sEnd, terminate simulation
-    when locomotive.s >= sEnd then
-      Modelica.Utilities.Streams.print(
-        "Reached end of track at s=" + String(locomotive.s) + "m");
-      terminate("End of track reached");
-    end when;
+    //when locomotive.s >= Track.sEnd then
+      //Modelica.Utilities.Streams.print(
+      //  "Reached end of track at s=" + String(locomotive.s) + "m");
+      //terminate("End of track reached");
+    //end when;
   end Test_Composition;
 
   record GeneralInfo

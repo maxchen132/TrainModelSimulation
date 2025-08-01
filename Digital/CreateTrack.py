@@ -5,7 +5,7 @@ from mpl_toolkits.mplot3d import Axes3D
 
 # Constants
 straight_len = 10  # in meters (1364 mm)
-curve_radius = 1.0  # in meters (315 mm)
+curve_radius = 2.0  # in meters (315 mm)
 num_points_straight = 100
 num_points_curve = 100
 
