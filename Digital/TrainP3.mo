@@ -1,106 +1,133 @@
 package TrainP3
-    model WagonAlongPath
-      import Modelica.Math.Vectors.length;
-      import Modelica.Math.Vectors.normalize;
-      import Modelica.Blocks.Interfaces;
-      import Modelica.Blocks.Tables.CombiTable1Ds;
-      import Modelica.Blocks.Types.Smoothness.ConstantSegments;
-      import SI=Modelica.SIunits;
-      // Constants
-      constant SI.Acceleration g[3] = {0,0,-10};
-      // Wagon/Locomotive Parameters
-      parameter SI.Mass m = 167000 "Total mass";
-      parameter SI.Radius R = 0.5 "Traction wheel radius";
-      parameter SI.Length len = 10 "Length of the wagon/locomotive";
-      parameter SI.Efficiency eta_mec = 0.98 "Mechanical torque transmission
-      efficiency";
-      // Friction Parameters
-      parameter Real A = 1.1224e-3;
-      parameter Real B = 9.32e-6;
-      parameter Real C = 3.044e-7;
-      parameter Real epsf = 0.01;
-      parameter SI.Conversions.NonSIunits.Velocity_kmh vsf = 3.0;
-      parameter Real Af = 2.7;
-      // Trajectory Data
-      parameter SI.Length b = 1.0 "Track gauge";
-      parameter String TableFile = "";
-      CombiTable1Ds RS(fileName = TableFile, tableName = "r", columns = {2,3,4}, tableOnFile = true, smoothness = ConstantSegments);
-      CombiTable1Ds DRDS(fileName = TableFile, tableName = "drds", columns = {2,3,4}, tableOnFile = true, smoothness = ConstantSegments);
-      CombiTable1Ds D2RDS2(fileName = TableFile, tableName = "d2rds2", columns = {2,3,4}, tableOnFile = true, smoothness = ConstantSegments);
-      // Inputs and Outputs
-      TrainP3.WagonCoupling cf, ct;
-      TrainP3.RotationalCoupling wheel;
-      Interfaces.RealOutput s(start=0), s_wrap, v;
-      // Variables
-      SI.Position r[3];
-      Real t[3], n[3];
-      SI.Acceleration gt, gn, at, an;
-      Real curvatura, k_Fatrito; // track curvature (1/m)
-      // SI.Radius raio; // radius of curvature (m)
-      SI.Force Fincl, Fatrito, Fcurva, Fmot, Fn;
-      SI.Conversions.NonSIunits.Velocity_kmh v_kmh;
+  model WagonAlongPath
+    import Modelica.Math.Vectors.length;
+    import Modelica.Math.Vectors.normalize;
+    import Modelica.Blocks.Interfaces;
+    import Modelica.Blocks.Tables.CombiTable1Ds;
+    import Modelica.Blocks.Sources.CombiTimeTable;
+    import Modelica.Blocks.Types.Smoothness.ConstantSegments;
+    import SI=Modelica.SIunits;
+    // Constants
+    constant SI.Acceleration g[3] = {0,0,-10};
+    // Wagon/Locomotive Parameters
+    parameter SI.Mass m = 167000 "Total mass";
+    parameter SI.Radius R = 0.5 "Traction wheel radius";
+    parameter SI.Length len = 10 "Length of the wagon/locomotive";
+    parameter SI.Efficiency eta_mec = 0.98 "Mechanical torque transmission
+    efficiency";
+    // Friction Parameters
+    parameter Real A = 1.1224e-3;
+    parameter Real B = 9.32e-6;
+    parameter Real C = 3.044e-7;
+    parameter Real epsf = 0.01;
+    parameter SI.Conversions.NonSIunits.Velocity_kmh vsf = 3.0;
+    parameter Real Af = 2.7;
+    // Trajectory Data
+    parameter SI.Length b = 1.0 "Track gauge";
+    parameter String TableFile = "";
+    parameter String rTable      = "r_main";
+    parameter String drdsTable   = "drds_main";
+    parameter String d2rds2Table = "d2rds2_main";
+    parameter Boolean useBranch = false "Switch to alternate branch?";
+    
+    CombiTable1Ds RS(fileName = TableFile, tableName = rTable, columns = {2,3,4}, tableOnFile = true, smoothness = ConstantSegments);
+    CombiTable1Ds DRDS(fileName = TableFile, tableName = drdsTable, columns = {2,3,4}, tableOnFile = true, smoothness = ConstantSegments);
+    CombiTable1Ds D2RDS2(fileName = TableFile, tableName = d2rds2Table, columns = {2,3,4}, tableOnFile = true, smoothness = ConstantSegments);
+    
+    // CombiTimeTable RS(tableOnFile = true,
+    //  fileName    = "Digital/r_table.csv",
+    //  tableName   = "",           // dummy, not used for CSV
+    //  columns     = {1, 2, 3, 4}, // col1 = s, col2–4 = x,y,z
+    //  smoothness  = ConstantSegments);
+  
+    // CombiTimeTable DRDS(
+    //  tableOnFile = true,
+    //  fileName    = "Digital/drds_table.csv",
+    //  tableName   = "",
+    //  columns     = {1, 2, 3, 4}, // col1 = s, col2–4 = dr/ds
+    //  smoothness  = ConstantSegments);
       
-      parameter Modelica.SIunits.Length sEnd = 20 + Modelica.Constants.pi * 2 * 2 "Total track length";   // 63.46
-    equation
+    //CombiTimeTable D2RDS2(
+    //  tableOnFile = true,
+    //  fileName    = "Digital/d2rds2_table.csv",
+    //  tableName   = "",
+    //  columns     = {1, 2, 3, 4}, // col1 = s, col2–4 = d²r/ds²
+    //  smoothness  = ConstantSegments);
+    // Inputs and Outputs
+    TrainP3.WagonCoupling cf, ct;
+    TrainP3.RotationalCoupling wheel;
+    Interfaces.RealOutput s(start=0), s_wrap, v;
+    // Variables
+    SI.Position r[3];
+    Real t[3], n[3];
+    SI.Acceleration gt, gn, at, an;
+    Real curvatura, k_Fatrito; // track curvature (1/m)
+    //SI.Radius raio; // radius of curvature (m)
+    SI.Force Fincl, Fatrito, Fcurva, Fmot, Fn;
+    SI.Conversions.NonSIunits.Velocity_kmh v_kmh;
+    
+    parameter Modelica.SIunits.Length sEnd = 136 * 2 + 31 * Modelica.Constants.pi * 2 "Total track length";   // 63.46
+  equation
+  
   // Trajectory data
-      r = RS.y;
-      t = normalize(DRDS.y);
-      n = D2RDS2.y;
+    r = RS.y;
+    t = normalize(DRDS.y);
+    n = D2RDS2.y;
   // Variables
-      der(s) = v;
-      
-      // wrap s back into [0, sEnd)
-      s_wrap = if s < sEnd then s else mod(s, sEnd);
-      
-      at = der(v);
-      v_kmh = SI.Conversions.to_kmh(v);
-      curvatura = length(n);
-      // allow straight segments (curvature = 0)
-      //if curvatura > 0 then
-        // raio = 1/curvatura;
-        an   = v^2 * curvatura;
-      //else
-      // on straight, radius infinite, no normal accel
-        // raio = Modelica.Constants.inf;
-        //an   = 0;
-      //end if;
-      gt = g * t;
-      gn = g * normalize(n);
+    der(s) = v;
+    
+    // wrap s back into [0, sEnd)
+    s_wrap = if s < sEnd then s else mod(s, sEnd);
+    
+    at = der(v);
+    v_kmh = SI.Conversions.to_kmh(v);
+    curvatura = length(n);
+    // allow straight segments (curvature = 0)
+    //if curvatura > 0 then
+      //raio * curvatura = 1;
+      an   = v^2 * curvatura;
+    //else
+    // on straight, radius infinite, no normal accel
+      // raio = Modelica.Constants.inf;
+      //an   = 0;
+    //end if;
+    gt = g * t;
+    gn = g * normalize(n);
   // Slope forceF
-      Fincl = m * gt;
+    Fincl = m * gt;
   // Friction force
-      if abs(v_kmh) <= epsf then
-        k_Fatrito = Af*v_kmh/epsf;
-      elseif abs(v_kmh) > epsf and abs(v_kmh) <= vsf then
-        k_Fatrito = Af*sign(v_kmh);
-      else
-        k_Fatrito = sign(v_kmh);
-      end if;
-      Fatrito = -k_Fatrito*(A+C*v_kmh^2+B*abs(v_kmh))*m*length(g);
-     // Curvature force (zero on straight)
-      //if curvatura > 1e-10 then
-        Fcurva = -0.5 * b * curvatura * m * length(g);
-      //else
-      //  Fcurva = 0;
-      //end if;
+    if abs(v_kmh) <= epsf then
+      k_Fatrito = Af*v_kmh/epsf;
+    elseif abs(v_kmh) > epsf and abs(v_kmh) <= vsf then
+      k_Fatrito = Af*sign(v_kmh);
+    else
+      k_Fatrito = sign(v_kmh);
+    end if;
+    Fatrito = -k_Fatrito*(A+C*v_kmh^2+B*abs(v_kmh))*m*length(g);
+   // Curvature force (zero on straight)
+    //if curvatura > 1e-10 then
+      Fcurva = -0.5 * b * curvatura * m * length(g);
+    //else
+    //  Fcurva = 0;
+    //end if;
   // Newton’s second law applied to mass moving along a path
-      m * at = Fmot + Fincl + Fatrito + Fcurva + cf.F + ct.F;
-      m * an = Fn + m * gn;
+    m * at = Fmot + Fincl + Fatrito + Fcurva + cf.F + ct.F;
+    m * an = Fn + m * gn;
   // Mechanical torque transmission
-      wheel.tau = Fmot * R * eta_mec;
-      der(wheel.phi) * R = v;
+    wheel.tau = Fmot * R * eta_mec;
+    der(wheel.phi) * R = v;
   // External connections
-      connect(s, RS.u);
-      connect(s, DRDS.u);
-      connect(s, D2RDS2.u);
-      
-      // feed the tables with wrapped coordinate
-      //connect(s_wrap, RS.u);
-      //connect(s_wrap, DRDS.u);
-      //connect(s_wrap, D2RDS2.u);
-      cf.s = s + len/2;
-      ct.s = s - len/2;
-    end WagonAlongPath;
+    connect(s, RS.u);
+    connect(s, DRDS.u);
+    connect(s, D2RDS2.u);
+    
+    // feed the tables with wrapped coordinate
+  // connect(s_wrap, RS.u);
+  // connect(s_wrap, DRDS.u);
+  // connect(s_wrap, D2RDS2.u);
+    cf.s = s + len/2;
+    ct.s = s - len/2;
+  end WagonAlongPath;
 
   connector WagonCoupling
     import SI=Modelica.SIunits;
@@ -115,8 +142,9 @@ package TrainP3
 
   model Test_Composition
   // Railway track table
-    TrainP3.GeneralInfo Track(file = "C:\\Users\\mchen\\Documents\\Repositories\\TrainModelSimulation\\Digital\\TrackTable.mat");
-    parameter Modelica.SIunits.Length sEnd = 136 * 2 + Modelica.Constants.pi * 2 * 31 "Total track length";   // 63.46
+    TrainP3.GeneralInfo Track(file = "C:\\Users\\mchen\\Documents\\Repositories\\TrainModelSimulation\\Digital\\TurnoutTable.mat");
+    parameter Modelica.SIunits.Length sEnd = 136 * 2 + 31 * Modelica.Constants.pi * 2 + 13 "Total track length";   // 63.46  10 + 50 * Modelica.Constants.pi / 2
+    
     // Train Composition
     
     TrainP3.WagonAlongPath locomotive(R = 0.96, TableFile = Track.file,
@@ -131,7 +159,7 @@ package TrainP3
     //3.5116e-8, TableFile = Track.file, b = 1, m = 300000);
     // Traction system
     Modelica.Blocks.Math.Feedback sum;
-    Modelica.Blocks.Sources.Ramp ramp(duration = 2, height = 180 / 3.6); // duration = 240, height = 60 / 3.6
+    Modelica.Blocks.Sources.Ramp ramp(duration = 240, height = 180 / 3.6); // duration = 240, height = 60 / 3.6
     Modelica.Blocks.Continuous.PID PID(Td = 0, Ti = 2, k = 200000);
     Modelica.Mechanics.Rotational.Sources.Torque motor;
    equation
@@ -148,7 +176,7 @@ package TrainP3
     
     // 2) When s reaches or exceeds sEnd, terminate simulation
     when locomotive.s >= sEnd then
-      Modelica.Utilities.Streams.print(
+    Modelica.Utilities.Streams.print(
         "Reached end of track at s=" + String(locomotive.s) + "m");
       terminate("End of track reached");
     end when;
