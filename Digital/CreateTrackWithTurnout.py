@@ -96,11 +96,12 @@ def build_loop(xb, yb):
     s = np.concatenate([[0], np.cumsum(ds)])[:len(x)]
     drds   = np.gradient(r, s, axis=0)
     d2r    = np.gradient(drds, s, axis=0)
-    return s, r, drds, d2r
+    perimeter = ds.sum()
+    return s, r, drds, d2r, perimeter
 
 # Main vs branch
-s_main,   r_main,   drds_main,   d2r_main   = build_loop(x_full,  y_full)
-s_branch, r_branch, drds_branch, d2r_branch = build_loop(x_branch, y_branch)
+s_main,   r_main,   drds_main,   d2r_main, s_main_len   = build_loop(x_full,  y_full)
+s_branch, r_branch, drds_branch, d2r_branch, s_branch_len = build_loop(x_branch, y_branch)
 
 # Format tables
 r_table_main = np.column_stack((s_main, r_main))
@@ -115,6 +116,12 @@ savemat('Digital/TurnoutTable.mat',{
   'r_main':r_table_main,    'drds_main':drds_table_main,    'd2rds2_main':d2rds2_table_main,
   'r_branch':r_table_branch,'drds_branch':drds_table_branch,'d2rds2_branch':d2rds2_table_branch
 })
+
+with open('Digital/last_s.txt', 'w') as output:
+    output.write(str(s_main_len) + "\n")
+
+with open('Digital/last_s.txt', 'a') as output:
+    output.write(str(s_branch_len))
 
 # --- 7) Quick plot check ---
 plt.figure(figsize=(6,6))
