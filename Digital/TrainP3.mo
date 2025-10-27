@@ -25,14 +25,21 @@ model WagonAlongPath
   // Trajectory Data
   parameter SI.Length b = 1.0 "Track gauge";
   parameter String TableFile = "";
-  parameter String rTable      = "r_main";
-  parameter String drdsTable   = "drds_main";
-  parameter String d2rds2Table = "d2rds2_main";
+  parameter String rTable_main      = "r_main";
+  parameter String drdsTable_main   = "drds_main";
+  parameter String d2rds2Table_main = "d2rds2_main";
+  parameter String rTable_branch      = "r_branch";
+  parameter String drdsTable_branch   = "drds_branch";
+  parameter String d2rds2Table_branch = "d2rds2_branch";
   parameter Boolean useBranch = false "Switch to alternate branch?";
   
-  CombiTable1Ds RS(fileName = TableFile, tableName = rTable, columns = {2,3,4}, tableOnFile = true, smoothness = ConstantSegments);
-  CombiTable1Ds DRDS(fileName = TableFile, tableName = drdsTable, columns = {2,3,4}, tableOnFile = true, smoothness = ConstantSegments);
-  CombiTable1Ds D2RDS2(fileName = TableFile, tableName = d2rds2Table, columns = {2,3,4}, tableOnFile = true, smoothness = ConstantSegments);
+  CombiTable1Ds RS_main(fileName = TableFile, tableName = rTable_main, columns = {2,3,4}, tableOnFile = true, smoothness = ConstantSegments);
+  CombiTable1Ds DRDS_main(fileName = TableFile, tableName = drdsTable_main, columns = {2,3,4}, tableOnFile = true, smoothness = ConstantSegments);
+  CombiTable1Ds D2RDS2_main(fileName = TableFile, tableName = d2rds2Table_main, columns = {2,3,4}, tableOnFile = true, smoothness = ConstantSegments);
+  
+  CombiTable1Ds RS_branch(fileName = TableFile, tableName = rTable_branch, columns = {2,3,4}, tableOnFile = true, smoothness = ConstantSegments);
+  CombiTable1Ds DRDS_branch(fileName = TableFile, tableName = drdsTable_branch, columns = {2,3,4}, tableOnFile = true, smoothness = ConstantSegments);
+  CombiTable1Ds D2RDS2_branch(fileName = TableFile, tableName = d2rds2Table_branch, columns = {2,3,4}, tableOnFile = true, smoothness = ConstantSegments);
   
   // CombiTimeTable RS(tableOnFile = true,
   //  fileName    = "Digital/r_table.csv",
@@ -57,6 +64,7 @@ model WagonAlongPath
   TrainP3.WagonCoupling cf, ct;
   TrainP3.RotationalCoupling wheel;
   Interfaces.RealOutput s(start=0), s_wrap, v;
+  
   // Variables
   SI.Position r[3];
   Real t[3], n[3];
@@ -66,17 +74,36 @@ model WagonAlongPath
   SI.Force Fincl, Fatrito, Fcurva, Fmot, Fn;
   SI.Conversions.NonSIunits.Velocity_kmh v_kmh;
   
-  parameter Modelica.SIunits.Length sEnd = 136 * 2 + 31 * Modelica.Constants.pi * 2 "Total track length";   // 63.46
+   // Read lines from the text file at translation time (must exist then)
+  parameter String lengthsFile = "C:\\Users\\mchen\\Documents\\Repositories\\TrainModelSimulation\\Digital\\last_s.txt";
+  parameter String lines[:] = Modelica.Utilities.Streams.readFile(lengthsFile);
+
+  // number of lines read
+  parameter Integer nlines = size(lines, 1);
+
+  // Parse with scanReal; provide safe fallback values if file is missing/short
+  parameter Modelica.SIunits.Length sEndMain   = if nlines >= 1 then Modelica.Utilities.Strings.scanReal(lines[1]) else 466.7705720361021;
+  parameter Modelica.SIunits.Length sEndBranch = if nlines >= 2 then Modelica.Utilities.Strings.scanReal(lines[2]) else 467.93028857263903;
   
+  parameter Modelica.SIunits.Length sEnd = sEndMain "Total track length";   // 63.46
+  parameter SI.Length s0 = 0 "initial s position";
+
+  discrete Modelica.SIunits.Length sEnd_local(start = if useBranch then sEndBranch else sEndMain);
+
   // Outputs to allow composition-level monitoring
   Interfaces.RealOutput r_out[3] "Cartesian position (x,y,z) of wagon center";
 
+initial equation
+  //s = s0;
+
 equation
 
+  //sEnd = if useBranch then sEndBranch else sEndMain;
+
 // Trajectory data
-  r = RS.y;
-  t = normalize(DRDS.y);
-  n = D2RDS2.y;
+  r = if useBranch then RS_branch.y else RS_main.y;
+  t = normalize(if useBranch then DRDS_branch.y else DRDS_main.y);
+  n = if useBranch then D2RDS2_branch.y else D2RDS2_main.y;
   
 // Output
   r_out = r;
@@ -85,7 +112,18 @@ equation
   der(s) = v;
   
   // wrap s back into [0, sEnd)
-  s_wrap = if s < sEnd then s else mod(s, sEnd);
+  s_wrap = if s < sEnd_local then s else mod(s, sEnd_local);
+  
+  // initialize local sEnd already done by start above; handle runtime changes:
+  when useBranch <> pre(useBranch) then
+    // compute fraction along old track and remap to new length
+    // pre(sEnd_local) is the old length
+    if pre(sEnd_local) > 0 then
+      s = s * (if useBranch then sEndBranch else sEndMain) / pre(sEnd_local);
+    end if;
+    // update local length to the newly selected one
+    sEnd_local = if useBranch then sEndBranch else sEndMain;
+  end when;
   
   at = der(v);
   v_kmh = SI.Conversions.to_kmh(v);
@@ -130,9 +168,13 @@ equation
   //connect(s, D2RDS2.u);
   
   // feed the tables with wrapped coordinate
-  connect(s_wrap, RS.u);
-  connect(s_wrap, DRDS.u);
-  connect(s_wrap, D2RDS2.u);
+  connect(s_wrap, RS_main.u);
+  connect(s_wrap, RS_branch.u);
+  connect(s_wrap, DRDS_main.u);
+  connect(s_wrap, DRDS_branch.u);
+  connect(s_wrap, D2RDS2_main.u);
+  connect(s_wrap, D2RDS2_branch.u);
+  
   cf.s = s + len/2;
   ct.s = s - len/2;
 end WagonAlongPath;
@@ -173,7 +215,7 @@ end WagonAlongPath;
     
     // Train 1
     TrainP3.WagonAlongPath locomotive(R = 0.96, TableFile = Track.file,
-    b = 1, len = 1);
+    b = 1, len = 1, s(start=50, fixed=true), sEnd=sEnd);
     TrainP3.WagonAlongPath wagon1(A = 8.253e-4, B = 1.405e-5, C =
     3.5116e-8, TableFile = Track.file, b = 1, m = 300000);
     TrainP3.WagonAlongPath wagon2(A = 8.253e-4, B = 1.405e-5, C =
@@ -186,7 +228,7 @@ end WagonAlongPath;
     // Train 2
     
     TrainP3.WagonAlongPath locomotive2(R = 0.96, TableFile = Track.file,
-    b = 1, len = 1);
+    b = 1, len = 1, sEnd=sEnd);
     
     // Traction system (train 1)
     Modelica.Blocks.Math.Feedback sum;
@@ -203,7 +245,7 @@ end WagonAlongPath;
     Modelica.Blocks.Math.Min holdClamp2;
     Modelica.Blocks.Continuous.PID PID2(Td = 0, Ti = 2, k = 200000);
     Modelica.Mechanics.Rotational.Sources.Torque motor2;
-   
+    
     // Collision Detector
     CollisionDetector cd(length1 = locomotive.len, length2 = locomotive2.len, safetyMargin = 0.5);
    
