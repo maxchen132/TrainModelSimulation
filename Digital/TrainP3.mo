@@ -66,7 +66,7 @@ model WagonAlongPath
   Interfaces.RealOutput s(start=0), s_wrap, v;
   
   // Variables
-  SI.Position r[3];
+  SI.Position r[3]; 
   Real t[3], n[3];
   SI.Acceleration gt, gn, at, an;
   Real curvatura, k_Fatrito; // track curvature (1/m)
