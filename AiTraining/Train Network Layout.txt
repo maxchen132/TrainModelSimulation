@@ -1,0 +1,203 @@
+Train Network Layout 
+
+ 
+
+Machines 
+
+Back Office Machine 
+
+Network Interfaces 
+
+Host Name: backoffice.cerias.purdue.edu 
+
+IP Address: 128.10.250.49 
+
+Subnet Mask: 255.255.255.0/24 
+
+Default Gateway: 128.10.250.1 
+
+DNS Servers: 128.10.243.21, 128.10.2.5- 
+
+DNS Domain Name: cerias.purdue.edu 
+
+MAC: 00:26:b9:3f:5e:14 
+
+Additional Software Packages 
+
+Oracle VirtualBox manager v7.1.10 
+
+nmcli v1.5.0 
+
+Network Services 
+
+Active Connection: netplan-eno1 (Ethernet) 
+
+Running Oracle VirtualBox manager v7.1.10 Operations VM 
+
+Undernet (eno2): 
+
+IP Address: 192.168.01 
+
+Subnet Mask: 255.255.255.0 (/24) 
+
+MAC: 00:26:b9:3f:5e:15 
+
+Operations Virtual Machine 
+
+Operating System and Version: Ubuntu 24.04.2 LTS 
+
+CPU Architecture: x86_64 
+
+Network Interfaces 
+
+Host Name: ops.cerias.purdue.edu 
+
+IP Address: 128.10.250.51 
+
+Subnet Mask: 255.255.255.0/24 
+
+Default Gateway: 128.10.250.1 
+
+DNS Servers: 128.10.243.21, 128.10.2.5 
+
+DNS Domain Name: cerias.purdue.edu 
+
+Additional Software Packages 
+
+Xvnc TigerVNC v1.13.1 
+
+JMRI v5.13.6 
+
+Network Services: (Port number and protocol) 
+
+Running Xvnc TigerVNC 1.13.1 Server on Port 5902, Display :2,  
+
+Connected to Wayside on DCC++ Ethernet Connection 128.10.250.50:4000 TCP 
+
+Running DCC++ Server on Port 1235 
+
+Broadcasting data traces to “Undernet” on 128.10.250.255:5005 
+
+Wayside Machine 
+
+Network Interfaces 
+
+Host Name: wayside.cerias.purdue.edu 
+
+IP Address: 128.10.250.50 
+
+Subnet Mask: 255.255.255.0/24 
+
+Default Gateway: 128.10.250.1 
+
+DNS Servers: 128.10.243.21, 128.10.2.5 
+
+DNS Domain Name: cerias.purdue.edu 
+
+MAC: 00:26:b9:3f:5d:48 
+
+Additional Software Packages 
+
+Oracle VirtualBox manager v7.1.10 
+
+nmcli v1.5.0 
+
+ser2net v4.6.5 
+
+Network Services 
+
+Active Connection: netplan-eno1 (Ethernet) 
+
+Running Oracle VirtualBox manager v7.1.10 PTC-111 VM 
+
+Running Oracle VirtualBox manager v7.1.10 PTC-2586 VM 
+
+ser2net: tcp, 0.0.0.0, port 4000, serialdev, /dev/ttyACM0, 115200n81, local 
+
+Undernet: 
+
+IP address: 192.168.0.2 
+
+Subnet mask: 255.255.255.0 (/24) 
+
+MAC: 00:26:b9:3f:5d:48 
+
+ 
+
+PTC-111 Virtual Machine 
+
+Operating System and Version: Ubuntu 24.04.2 LTS 
+
+CPU Architecture: x86_64 
+
+Network Interfaces 
+
+Host Name: ops.cerias.purdue.edu 
+
+IP Address: 128.10.250.53 
+
+Subnet Mask: 255.255.255.0/24 
+
+Default Gateway: 128.10.250.1 
+
+DNS Servers: 128.10.243.21, 128.10.2.5 
+
+DNS Domain Name: cerias.purdue.edu 
+
+Additional Software Packages 
+
+Xvnc TigerVNC v1.13.1 
+
+JMRI v5.13.6 
+
+Network Services: (Port number and protocol) 
+
+Running Xvnc TigerVNC 1.13.1 Server on Port 5902, Display :2,  
+
+Connected to ops on DCC++ Server on 128.10.250.51:1235 
+
+PTC-2586 Virtual Machine 
+
+Operating System and Version: Ubuntu 24.04.2 LTS 
+
+CPU Architecture: x86_64 
+
+Network Interfaces 
+
+Host Name: ptc-2586.cerias.purdue.edu 
+
+IP Address: 128.10.250.54 
+
+Subnet Mask: 255.255.255.0/24 
+
+Default Gateway: 128.10.250.1 
+
+DNS Servers: 128.10.243.21, 128.10.2.5 
+
+DNS Domain Name: cerias.purdue.edu 
+
+Additional Software Packages 
+
+Xvnc TigerVNC v1.13.1 
+
+JMRI v5.13.6 
+
+Network Services: (Port number and protocol) 
+
+Running Xvnc TigerVNC 1.13.1 Server on Port 5902, Display :2,  
+
+Connected to ops on DCC++ Server on 128.10.250.51:1235 
+
+Network Layout 
+
+Back Office hosts Operations VM 
+
+Operations VM connected to Wayside via serial to TCP on Wayside port 4000, with JMRI DCC++ Ethernet Connection 
+
+Operations VM broadcasting data traces to “Undernet” on 128.10.250.255:5005 
+
+Wayside hosts PTC-111 and PTC-2586 VMs 
+
+PTC-111 and PTC-2586 connected to Operations via DCC++ Client Connection on port 1235 
+
+ 
