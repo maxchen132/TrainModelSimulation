@@ -77,7 +77,6 @@ class BaseRoute(jmri.jmrit.automat.AbstractAutomaton):
 
         self.throttle = self.getThrottle(self.loco, True)
         log("[{}] Got throttle for loco {}".format(self.name, self.loco))
-        return True
 
     def set_turnout(self, tid, state):
         t = turnouts.provideTurnout(tid)
